@@ -1,7 +1,11 @@
+﻿using API_WebSach.Controllers;
+using API_WebSach.Models;
+using API_WebSach.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +32,16 @@ namespace API_WebSach
         {
 
             services.AddControllers();
+            // đăng ký service cho sql
+            services.AddDbContext<NxbKimDongContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("MyDB"));
+
+            });
+            // đki dùng cho interface các(Repository pattern)
+            // khi sử dụng 1 interface thì dùng lớp kế thừa tử interface
+            services.AddScoped<IDanhMucRepository, DanhMucRepository>();//(Dependent injection)
+            services.AddScoped<ISachRepository, SachRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API_WebSach", Version = "v1" });
