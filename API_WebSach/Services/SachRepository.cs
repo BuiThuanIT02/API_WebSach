@@ -1,5 +1,6 @@
 ﻿using API_WebSach.EntityView;
 using API_WebSach.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,10 +34,10 @@ namespace API_WebSach.Services
                 }
 
             }
-            products = products.Skip((page - 1) * 5).Take(5);
+           
+            var resulf = PageList<Sach>.Create(products, page, 5);
 
-
-            var resulft = products.Select(hh => new SachView
+           return resulf.Select(hh => new SachView
             {// ép kiểu về 
                 Id = hh.Id,
                 Name = hh.Name,
@@ -45,8 +46,8 @@ namespace API_WebSach.Services
                 Quantity = hh.Quantity,
                 Sale = hh.Sale
 
-            });
-            return resulft.ToList();
+            }).ToList();
+           
         }
     }
 }
