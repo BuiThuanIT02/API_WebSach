@@ -14,7 +14,11 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API_WebSach
 {
@@ -42,6 +46,32 @@ namespace API_WebSach
             // khi sử dụng 1 interface thì dùng lớp kế thừa tử interface
             services.AddScoped<IDanhMucRepository, DanhMucRepository>();//(Dependent injection)
             services.AddScoped<ISachRepository, SachRepository>();
+
+            var secretKey = Configuration["AppSettings:SecretKey"];
+            var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {
+
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    // tự cấp token
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    // ký vào Token
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+
+
+
+
+
+
+
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API_WebSach", Version = "v1" });
@@ -61,6 +91,7 @@ namespace API_WebSach
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
