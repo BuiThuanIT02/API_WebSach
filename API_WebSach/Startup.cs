@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using API_WebSach.EntityView;
 
 namespace API_WebSach
 {
@@ -46,7 +47,7 @@ namespace API_WebSach
             // khi sử dụng 1 interface thì dùng lớp kế thừa tử interface
             services.AddScoped<IDanhMucRepository, DanhMucRepository>();//(Dependent injection)
             services.AddScoped<ISachRepository, SachRepository>();
-
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var secretKey = Configuration["AppSettings:SecretKey"];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {
